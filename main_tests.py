@@ -2,11 +2,27 @@ import os
 import sys
 import unittest
 
+from main import Check
 
 
 class TestMain(unittest.TestCase):
-    pass
+    #test message parsing:
+    #"Send $5 to John Snow (john.snow@westeros.com) for The Night Watch"
+    #"Send ${amount} to {name} ({email}) for {description}"
 
+    def test_valid_check(self):
+        msg = "Send $5 to John Snow (john.snow@westeros.com) for The Night Watch"
+        expected = {"name":'John Snow', "recipient":'john.snow@westeros.com', 
+                    "amount": 5, "description": "The Night Watch"}
+        c = Check(msg)
+
+        self.assertFalse(c.errors)
+        self.assertEqual(c.amount, 5)
+        self.assertEqual(c.name, 'John Snow')
+        self.assertEqual(c.email, 'john.snow@westeros.com')
+        self.assertEqual(c.description, "The Night Watch")
+
+        self.assertEqual(c.checkbook_post_data(), expected)
 
 #checks that the necessary environmental variables are set.
 class TestEnv(unittest.TestCase):
