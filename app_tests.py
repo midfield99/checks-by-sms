@@ -19,6 +19,14 @@ class TestMain(unittest.TestCase):
 
         self.assertEqual(c.checkbook_post_data(), expected)
 
+    def test_invalid_check(self):
+        msg = "Send 5 to John Snow john.snow@westeros.com) for armor."
+
+        c = Check(msg)
+        
+        self.assertTrue(c.errors)
+        print(c.errors)
+
     #Note, need to mock api calls and responses. Unit tests shouldn't hit databases
     # def test_send_check(self):
     #     msg = "Send $5 to John Snow (john.snow@westeros.com) for The Night Watch"
