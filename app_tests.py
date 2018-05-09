@@ -3,7 +3,7 @@ import sys
 import unittest
 
 from Check import Check
-from main import send_check
+from app import send_check
 
 
 class TestMain(unittest.TestCase):
