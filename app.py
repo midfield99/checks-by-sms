@@ -1,11 +1,13 @@
 import os
 import requests
+from dotenv import load_dotenv
 from flask import Flask, request, redirect
 from twilio.rest import Client
 from twilio.twiml.messaging_response import MessagingResponse
 
 from Check import Check
 
+load_dotenv('.env')
 app = Flask(__name__)
 
 @app.route("/send_check", methods=['GET', 'POST'])
@@ -42,10 +44,11 @@ def send_check(sms_check):
         print(sms_check.errors)
         return None
 
-    auth = os.environ.get('CHECKBOOK_KEY') + ':' + os.environ.get('CHECKBOOK_SECRET')
+    auth = str(os.environ.get('CHECKBOOK_KEY')) + ':' + str(os.environ.get('CHECKBOOK_SECRET'))
+    print(auth)
     headers={'Content-type':'application/json', 'Authorization': auth}
-    send_digital = os.environ.get('CHECKBOOK_URL') + '/v3/check/digital'
-
+    send_digital = str(os.environ.get('CHECKBOOK_URL')) + '/v3/check/digital'
+    print(send_digital)
 
     return requests.post(send_digital, headers=headers, 
                         json=sms_check.checkbook_post_data())
