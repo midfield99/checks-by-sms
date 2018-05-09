@@ -2,7 +2,8 @@ import os
 import sys
 import unittest
 
-from main import Check
+from Check import Check
+from main import send_check
 
 
 class TestMain(unittest.TestCase):
@@ -16,13 +17,19 @@ class TestMain(unittest.TestCase):
                     "amount": 5, "description": "The Night Watch"}
         c = Check(msg)
 
-        self.assertFalse(c.errors)
-        self.assertEqual(c.amount, 5)
-        self.assertEqual(c.name, 'John Snow')
-        self.assertEqual(c.email, 'john.snow@westeros.com')
-        self.assertEqual(c.description, "The Night Watch")
-
         self.assertEqual(c.checkbook_post_data(), expected)
+
+    #Note, need to mock api calls and responses. Unit tests shouldn't hit databases
+    # def test_send_check(self):
+    #     msg = "Send $5 to John Snow (john.snow@westeros.com) for The Night Watch"
+
+    #     c = Check(msg)
+    #     response = send_check(c)
+    #     print(response)
+    #     print(response.json())
+
+    #     self.assertTrue(False)
+
 
 #checks that the necessary environmental variables are set.
 class TestEnv(unittest.TestCase):

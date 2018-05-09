@@ -32,5 +32,20 @@ def incoming_sms():
 def ping():
     return "pong"
 
+
+def send_check(sms_check):
+    if sms_check.errors:
+        print("The check is invalid.")
+        print(sms_check.errors)
+        return None
+
+    auth = os.environ.get('CHECKBOOK_KEY') + ':' + os.environ.get('CHECKBOOK_SECRET')
+    headers={'Content-type':'application/json', 'Authorization': auth}
+    send_digital = os.environ.get('CHECKBOOK_URL') + '/v3/check/digital'
+
+
+    return requests.post(send_digital, headers=headers, 
+                        json=sms_check.checkbook_post_data())
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=80)
