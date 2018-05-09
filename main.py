@@ -21,7 +21,10 @@ def incoming_sms():
     if body:
         sms_check = Check(body)
         if not sms_check.errors:
-            resp.message("check is valid")
+            response = send_check(sms_check)
+            print(response)
+            print(response.json())
+            resp.message("check was sent")
         else:
             print(sms_check.errors)
             resp.message("check is not valid")
