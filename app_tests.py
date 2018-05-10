@@ -53,20 +53,5 @@ class TestEnv(unittest.TestCase):
     def test_checkbook_url(self):
         self.assertTrue(os.environ.get('CHECKBOOK_URL'))
 
-    #Twilio setup.
-    def test_twilio_sid(self):
-        self.assertTrue(os.environ.get('TWILIO_ACCOUNT_SID'))
-        self.assertNotEqual(os.environ.get('TWILIO_ACCOUNT_SID'), 'FAKE_SID')
-
-    def test_twilio_auth(self):
-        self.assertTrue(os.environ.get('TWILIO_AUTH_TOKEN'))
-        self.assertNotEqual(os.environ.get('TWILIO_AUTH_TOKEN'), 'FAKE_TOKEN')
-
-
-    def test_twilio_number(self):
-        self.assertTrue(os.environ.get('TWILIO_NUMBER'))
-        self.assertNotEqual(os.environ.get('TWILIO_NUMBER'), 'FAKE_NUMBER')
-
-
 if __name__ == '__main__':
     unittest.main()
