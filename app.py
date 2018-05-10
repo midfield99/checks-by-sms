@@ -24,10 +24,15 @@ def incoming_sms():
         sms_check = Check(body)
         if not sms_check.errors:
             response = send_check(sms_check)
-            print(response)
-            print(response.json())
-            resp.message("The check was sent.")
+            if response.status_code == 201:
+                resp.message("The check was sent.")
+            else:
+                print("Checkbook.io API response info:")
+                print(body)
+                print(response.status_code)
+                resp.message("API call was not successful.")
         else:
+            print("Message parsing errors:")
             print(sms_check.errors)
             resp.message("Check is not valid." + str(sms_check.errors))
 
@@ -40,15 +45,11 @@ def ping():
 
 def send_check(sms_check):
     if sms_check.errors:
-        print("The check is invalid.")
-        print(sms_check.errors)
         return None
 
     auth = str(os.environ.get('CHECKBOOK_KEY')) + ':' + str(os.environ.get('CHECKBOOK_SECRET'))
-    print(auth)
     headers={'Content-type':'application/json', 'Authorization': auth}
     send_digital = str(os.environ.get('CHECKBOOK_URL')) + '/v3/check/digital'
-    print(send_digital)
 
     return requests.post(send_digital, headers=headers, 
                         json=sms_check.checkbook_post_data())
