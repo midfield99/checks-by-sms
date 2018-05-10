@@ -2,6 +2,16 @@
 config.sh
 *.pem
 
+#virtualenvironment files
+bin/
+pyvenv.cfg
+
+
+#general python files
+share/
+lib64/
+pip-selfcheck.json
+
 #from https://github.com/github/gitignore/blob/master/Python.gitignore
 # Byte-compiled / optimized / DLL files
 __pycache__/
