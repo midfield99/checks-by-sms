@@ -26,10 +26,10 @@ def incoming_sms():
             response = send_check(sms_check)
             print(response)
             print(response.json())
-            resp.message("check was sent")
+            resp.message("The check was sent.")
         else:
             print(sms_check.errors)
-            resp.message("check is not valid")
+            resp.message("Check is not valid." + str(sms_check.errors))
 
     return str(resp)
 
