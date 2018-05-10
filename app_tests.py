@@ -1,20 +1,21 @@
 import os
 import sys
 import unittest
+from dotenv import load_dotenv
 
 from Check import Check
 from app import send_check
 
+load_dotenv('.env')
+
 class TestMain(unittest.TestCase):
     #test message parsing:
-    #"Send $5 to John Snow (john.snow@westeros.com) for The Night Watch"
     #"Send ${amount} to {name} ({email}) for {description}"
     def test_valid_check(self):
         msg = "Send $5 to John Snow (john.snow@westeros.com) for The Night Watch"
         expected = {"name":'John Snow', "recipient":'john.snow@westeros.com', 
                     "amount": 5.0, "description": "The Night Watch"}
         c = Check(msg)
-        print(c.errors)
         self.assertEqual(c.checkbook_post_data(), expected)
 
     def test_invalid_check(self):
@@ -26,17 +27,6 @@ class TestMain(unittest.TestCase):
         
         self.assertTrue(c.errors)
         self.assertEqual(c.errors, expected)
-
-    #Note, need to mock api calls and responses. Unit tests shouldn't hit databases
-    # def test_send_check(self):
-    #     msg = "Send $5 to John Snow (john.snow@westeros.com) for The Night Watch"
-
-    #     c = Check(msg)
-    #     response = send_check(c)
-    #     print(response)
-    #     print(response.json())
-
-    #     self.assertTrue(False)
 
 
 #checks that the necessary environmental variables are set.
