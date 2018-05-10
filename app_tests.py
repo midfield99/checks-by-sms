@@ -5,27 +5,27 @@ import unittest
 from Check import Check
 from app import send_check
 
-
 class TestMain(unittest.TestCase):
     #test message parsing:
     #"Send $5 to John Snow (john.snow@westeros.com) for The Night Watch"
     #"Send ${amount} to {name} ({email}) for {description}"
-
     def test_valid_check(self):
         msg = "Send $5 to John Snow (john.snow@westeros.com) for The Night Watch"
         expected = {"name":'John Snow', "recipient":'john.snow@westeros.com', 
-                    "amount": 5, "description": "The Night Watch"}
+                    "amount": 5.0, "description": "The Night Watch"}
         c = Check(msg)
-
+        print(c.errors)
         self.assertEqual(c.checkbook_post_data(), expected)
 
     def test_invalid_check(self):
-        msg = "Send 5 to John Snow john.snow@westeros.com) for armor."
-
+        msg = "send 5 to John Snow john.snow@westeros.com) for armor."
+        expected = ['Start message with "Send"', 'Invalid amount.', 
+                    'Invalid name', 'Invalid email', 
+                    'Format is:Send ${amount} to {name} ({email}) for {description}']
         c = Check(msg)
         
         self.assertTrue(c.errors)
-        print(c.errors)
+        self.assertEqual(c.errors, expected)
 
     #Note, need to mock api calls and responses. Unit tests shouldn't hit databases
     # def test_send_check(self):
