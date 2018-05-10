@@ -31,7 +31,12 @@ Install pip requirements:
 
 `pip install -r requirements.txt`
 
-Add your checkbook.io credentials to .env. These are located here:
+Add your checkbook.io credentials to .env. The credentials must match the API.
+
+API Endpoints:
+https://www.checkbook.io/docs/api#testing
+
+Credentials are located here:
 
 https://checkbook.io/account/settings/developer
 
