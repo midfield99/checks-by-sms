@@ -28,6 +28,61 @@ class TestMain(unittest.TestCase):
         self.assertTrue(c.errors)
         self.assertEqual(c.errors, expected)
 
+    #test specific error messages
+    def test_general_error(self):
+        msg = "send $5 to John Snow (john.snow@westeros.com) for The Night Watch"
+        expected = ['Start message with "Send"', 
+                    'Format is:Send ${amount} to {name} ({email}) for {description}']
+        c = Check(msg)
+        
+        self.assertTrue(c.errors)
+        self.assertEqual(c.errors, expected)
+
+    def test_name_error(self):
+        msg = "Send $5 toJohn Snow (john.snow@westeros.com) for The Night Watch"
+        expected = ["Invalid name", 
+                    'Format is:Send ${amount} to {name} ({email}) for {description}']
+        c = Check(msg)
+        
+        self.assertTrue(c.errors)
+        self.assertEqual(c.errors, expected)
+
+    def test_email_error(self):
+        msg = "Send $5 to John Snow (john.snow@westeros.com for The Night Watch"
+        expected = ["Invalid email", 
+                    'Format is:Send ${amount} to {name} ({email}) for {description}']
+        c = Check(msg)
+        
+        self.assertTrue(c.errors)
+        self.assertEqual(c.errors, expected)
+
+    def test_amount_error_general(self):
+        msg = "Send 5 to John Snow (john.snow@westeros.com) for The Night Watch"
+        expected = ['Invalid amount.',
+                    'Format is:Send ${amount} to {name} ({email}) for {description}']
+        c = Check(msg)
+        
+        self.assertTrue(c.errors)
+        self.assertEqual(c.errors, expected)
+
+    def test_amount_error_not_number(self):
+        msg = "Send $five to John Snow (john.snow@westeros.com) for The Night Watch"
+        expected = ['Amount is not a number.',
+                    'Format is:Send ${amount} to {name} ({email}) for {description}']
+        c = Check(msg)
+        
+        self.assertTrue(c.errors)
+        self.assertEqual(c.errors, expected)
+
+    def test_amount_error_fractional(self):
+        msg = "Send $5.123 to John Snow (john.snow@westeros.com) for The Night Watch"
+        expected = ['Amount can only have two decimal places.',
+                    'Format is:Send ${amount} to {name} ({email}) for {description}']
+        c = Check(msg)
+        
+        self.assertTrue(c.errors)
+        self.assertEqual(c.errors, expected)
+
 
 #checks that the necessary environmental variables are set.
 class TestEnv(unittest.TestCase):
