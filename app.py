@@ -10,7 +10,7 @@ from Check import Check
 load_dotenv('.env')
 app = Flask(__name__)
 
-@app.route("/send_check", methods=['GET', 'POST'])
+@app.route("/send_check", methods=['POST'])
 def incoming_sms():
     """Send a dynamic reply to an incoming text message"""
     # Get the message the user sent our Twilio number
