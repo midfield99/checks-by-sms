@@ -28,16 +28,16 @@ class Check:
                 self.errors.append('Invalid amount.')
                 return None
 
-            tmp = tmp.rstrip('0')
-
             try:
                 float(tmp)
             except ValueError:
                 self.errors.append('Amount is not a number.')
                 return None
 
-            if '.' in tmp and len(tmp.split('.')[1]) > 2:
-                self.errors.append('Amount can only have two decimal places.')
+            if '.' in tmp:
+                tmp = tmp.rstrip('0')
+                if len(tmp.split('.')[1]) > 2:
+                    self.errors.append('Amount can only have two decimal places.')
                 return None
 
             return float(tmp)
