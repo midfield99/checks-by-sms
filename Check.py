@@ -38,7 +38,7 @@ class Check:
                 tmp = tmp.rstrip('0')
                 if len(tmp.split('.')[1]) > 2:
                     self.errors.append('Amount can only have two decimal places.')
-                return None
+                    return None
 
             return float(tmp)
 

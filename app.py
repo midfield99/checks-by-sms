@@ -29,6 +29,8 @@ def incoming_sms():
             else:
                 print("Checkbook.io API response info:")
                 print(body)
+                print(response.text)
+                print(sms_check.checkbook_post_data())
                 print(response.status_code)
                 resp.message("API call was not successful.")
         else:
