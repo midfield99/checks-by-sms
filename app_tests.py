@@ -74,14 +74,24 @@ class TestMain(unittest.TestCase):
         self.assertTrue(c.errors)
         self.assertEqual(c.errors, expected)
 
-    def test_amount_error_fractional(self):
-        msg = "Send $5.123 to John Snow (john.snow@westeros.com) for The Night Watch"
+    def test_amount_error_is_number(self):
+        msg = "Send {0} to John Snow (john.snow@westeros.com) for The Night Watch"
         expected = ['Amount can only have two decimal places.',
                     'Format is:Send ${amount} to {name} ({email}) for {description}']
-        c = Check(msg)
+
+        no_dec = Check(msg.format('$500'))
+        extra_zeros = Check(msg.format('$5.20000'))
+        frac = Check(msg.format('$5.123'))
         
-        self.assertTrue(c.errors)
-        self.assertEqual(c.errors, expected)
+        self.assertFalse(no_dec.errors)
+        self.assertEqual(no_dec.amount, 500)
+
+        self.assertFalse(extra_zeros.errors)
+        self.assertEqual(extra_zeros.amount, 5.20)
+
+        self.assertTrue(frac.errors)
+        self.assertEqual(frac.errors, expected)
+        self.assertEqual(frac.amount, None)
 
 
 #checks that the necessary environmental variables are set.
