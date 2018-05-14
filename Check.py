@@ -52,7 +52,7 @@ class Check:
 
         def get_email():
             #valid format: ...({email})...
-            tmp = Check.__get_substr(msg, ' (', ') ')
+            tmp = Check.__get_substr(msg, ' (', ')')
             if not tmp:
                 self.errors.append("Invalid email")
                 return None

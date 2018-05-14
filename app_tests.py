@@ -11,6 +11,8 @@ load_dotenv('.env')
 class TestMain(unittest.TestCase):
     #test message parsing:
     #"Send ${amount} to {name} ({email}) for {description}"
+    format_msg = 'Format is:Send ${amount} to {name} ({email}) for {description}'
+
     def test_valid_check(self):
         msg = "Send $5 to John Snow (john.snow@westeros.com) for The Night Watch"
         expected = {"name":'John Snow', "recipient":'john.snow@westeros.com', 
@@ -21,8 +23,7 @@ class TestMain(unittest.TestCase):
     def test_invalid_check(self):
         msg = "send 5 to John Snow john.snow@westeros.com) for armor."
         expected = ['Start message with "Send"', 'Invalid amount.', 
-                    'Invalid name', 'Invalid email', 
-                    'Format is:Send ${amount} to {name} ({email}) for {description}']
+                    'Invalid name', 'Invalid email', self.format_msg]
         c = Check(msg)
         
         self.assertTrue(c.errors)
@@ -31,8 +32,7 @@ class TestMain(unittest.TestCase):
     #test specific error messages
     def test_general_error(self):
         msg = "send $5 to John Snow (john.snow@westeros.com) for The Night Watch"
-        expected = ['Start message with "Send"', 
-                    'Format is:Send ${amount} to {name} ({email}) for {description}']
+        expected = ['Start message with "Send"', self.format_msg]
         c = Check(msg)
         
         self.assertTrue(c.errors)
@@ -40,26 +40,39 @@ class TestMain(unittest.TestCase):
 
     def test_name_error(self):
         msg = "Send $5 toJohn Snow (john.snow@westeros.com) for The Night Watch"
-        expected = ["Invalid name", 
-                    'Format is:Send ${amount} to {name} ({email}) for {description}']
+        expected = ["Invalid name", self.format_msg]
         c = Check(msg)
         
         self.assertTrue(c.errors)
         self.assertEqual(c.errors, expected)
 
     def test_email_error(self):
-        msg = "Send $5 to John Snow (john.snow@westeros.com for The Night Watch"
-        expected = ["Invalid email", 
-                    'Format is:Send ${amount} to {name} ({email}) for {description}']
-        c = Check(msg)
+        msg = "Send $5 to John Snow {0}{1}"
+        no_rparen = Check(msg.format('(john.snow@westeros.com', ' for The Night Watch'))
+        no_lparen = Check(msg.format('john.snow@westeros.com)', ' for The Night Watch'))
+        valid_no_for1 = Check(msg.format('(john.snow@westeros.com)', None))
+        valid_no_for2 = Check(msg.format('(john.snow@westeros.com).', None))
+        valid_for = Check(msg.format('(john.snow@westeros.com)', ' for The Night Watch'))
         
-        self.assertTrue(c.errors)
-        self.assertEqual(c.errors, expected)
+        self.assertTrue(no_rparen.errors)
+        self.assertEqual(no_rparen.errors, ["Invalid email", self.format_msg])
+
+        self.assertTrue(no_lparen.errors)
+        self.assertEqual(no_lparen.errors, ["Invalid name", "Invalid email", self.format_msg])
+
+        self.assertFalse(valid_no_for1.errors)
+        self.assertEqual(valid_no_for1.email, 'john.snow@westeros.com')
+
+        self.assertFalse(valid_no_for2.errors)
+        self.assertEqual(valid_no_for2.email, 'john.snow@westeros.com')
+
+        self.assertFalse(valid_for.errors)
+        self.assertEqual(valid_for.email, 'john.snow@westeros.com')
+
 
     def test_amount_error_general(self):
         msg = "Send 5 to John Snow (john.snow@westeros.com) for The Night Watch"
-        expected = ['Invalid amount.',
-                    'Format is:Send ${amount} to {name} ({email}) for {description}']
+        expected = ['Invalid amount.', self.format_msg]
         c = Check(msg)
         
         self.assertTrue(c.errors)
@@ -67,8 +80,7 @@ class TestMain(unittest.TestCase):
 
     def test_amount_error_not_number(self):
         msg = "Send $five to John Snow (john.snow@westeros.com) for The Night Watch"
-        expected = ['Amount is not a number.',
-                    'Format is:Send ${amount} to {name} ({email}) for {description}']
+        expected = ['Amount is not a number.', self.format_msg]
         c = Check(msg)
         
         self.assertTrue(c.errors)
@@ -76,8 +88,7 @@ class TestMain(unittest.TestCase):
 
     def test_amount_error_is_number(self):
         msg = "Send {0} to John Snow (john.snow@westeros.com) for The Night Watch"
-        expected = ['Amount can only have two decimal places.',
-                    'Format is:Send ${amount} to {name} ({email}) for {description}']
+        expected = ['Amount can only have two decimal places.', self.format_msg]
 
         no_dec = Check(msg.format('$500'))
         extra_zeros = Check(msg.format('$5.20000'))
